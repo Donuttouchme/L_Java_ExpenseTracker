@@ -25,7 +25,7 @@ One category has many expenses (one-to-many).
 
 ## Roadmap
 
-- [ ] **Phase 1** — Project setup, Git/GitHub, domain entities (`@Entity`) + H2
+- [x] **Phase 1** — Project setup, Git/GitHub, domain entities (`@Entity`) + H2
 - [ ] **Phase 2** — Repository layer (Spring Data JPA)
 - [ ] **Phase 3** — Service + Controller: full CRUD REST API
 - [ ] **Phase 4** — DTOs, validation, error handling
