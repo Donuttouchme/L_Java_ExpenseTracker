@@ -15,13 +15,14 @@ public class ExpenseRequest {
     private String description;
     @NotNull
     private LocalDate date;
+    @NotNull
+    private Long categoryId;
 
-    public ExpenseRequest(){}
-
-    public ExpenseRequest(BigDecimal _amount, String _description, LocalDate _date){
+    public ExpenseRequest(BigDecimal _amount, String _description, LocalDate _date, Long _categoryId){
         amount = _amount;
         description = _description;
         date = _date;
+        categoryId = _categoryId;
     }
 
     public BigDecimal getAmount(){
@@ -46,5 +47,12 @@ public class ExpenseRequest {
 
     public void setDate(LocalDate _date){
         date = _date;
+    }
+
+    public Long getCategoryId(){
+        return categoryId;
+    }
+    public void setCategoryId(Long _categoryId){
+        categoryId = _categoryId;
     }
 }

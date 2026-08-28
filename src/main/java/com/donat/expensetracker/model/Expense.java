@@ -1,12 +1,6 @@
 package com.donat.expensetracker.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -22,43 +16,55 @@ public class Expense {
     private String description;
     private LocalDate date;
 
+    @ManyToOne
+    private Category category;
+
     public Expense(){}
 
-    public Expense(BigDecimal amount, String description, LocalDate date){
-        this.amount = amount;
-        this.description = description;
-        this.date = date;
+    public Expense(BigDecimal _amount, String _description, LocalDate _date, Category _category){
+        amount = _amount;
+        description = _description;
+        date = _date;
+        category = _category;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id){
-        this.id = id;
+    public void setId(Long _id){
+        id = _id;
     }
 
     public BigDecimal getAmount(){
         return amount;
     }
 
-    public void setAmount(BigDecimal amount){
-        this.amount = amount;
+    public void setAmount(BigDecimal _amount){
+        amount = _amount;
     }
 
     public String getDescription(){
         return description;
     }
 
-    public void setDescription(String description){
-        this.description = description;
+    public void setDescription(String _description){
+        description = _description;
     }
 
     public LocalDate getDate(){
         return date;
     }
 
-    public void setDate(LocalDate date){
-        this.date = date;
+    public void setDate(LocalDate _date){
+        date = _date;
+    }
+
+    public void setCategory(Category _category){
+        category = _category;
+    }
+
+    public Category getCategory(){
+        return category;
     }
 }
