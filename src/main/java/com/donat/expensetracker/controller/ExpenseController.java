@@ -1,38 +1,49 @@
 package com.donat.expensetracker.controller;
 
+import com.donat.expensetracker.dto.ExpenseRequest;
 import com.donat.expensetracker.model.Expense;
-import com.donat.expensetracker.repository.ExpenseRepository;
-
+import com.donat.expensetracker.service.ExpenseService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/expenses")
 public class ExpenseController {
 
-    private final ExpenseRepository expenseRepository;
+    private final ExpenseService expenseService;
 
-    public ExpenseController(ExpenseRepository expenseRepository){
-        this.expenseRepository = expenseRepository;
+    public ExpenseController(ExpenseService _expenseService){
+        expenseService = _expenseService;
     }
 
     @GetMapping
     public List<Expense> getAllExpenses(){
-        return expenseRepository.findAll();
+        return expenseService.getAllExpenses();
     }
     @GetMapping("/{id}")
-    public Optional<Expense> getExpenseById(@PathVariable Long id){
-        return expenseRepository.findById(id);
+    public ResponseEntity<Expense> getExpenseById(@PathVariable Long id){
+        return expenseService.findById(id)
+                .map(expense -> ResponseEntity.ok(expense))
+                .orElse(ResponseEntity.notFound().build());
     }
     @PostMapping
-    public Expense createExpense(@RequestBody Expense expense){
-        return expenseRepository.save(expense);
+    public ResponseEntity<Expense> createExpense(@Valid @RequestBody ExpenseRequest expenseRequest){
+        Expense saved = expenseService.createExpense(expenseRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteExpense(@PathVariable Long id){
-        expenseRepository.deleteById(id);
+    public ResponseEntity<Void> deleteExpense(@PathVariable Long id) {
+        if (expenseService.existsById(id)) {
+            expenseService.deleteById(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
+
 }
