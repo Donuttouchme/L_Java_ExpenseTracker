@@ -1,5 +1,6 @@
 package com.donat.expensetracker.controller;
 
+import com.donat.expensetracker.dto.CategorySummary;
 import com.donat.expensetracker.dto.ExpenseRequest;
 import com.donat.expensetracker.model.Expense;
 import com.donat.expensetracker.service.ExpenseService;
@@ -21,11 +22,17 @@ public class ExpenseController {
     }
 
     @GetMapping
-    public List<Expense> getAllExpenses(){
-        return expenseService.getAllExpenses();
+    public List<Expense> getAllExpenses(@RequestParam(required = false) Long categoryId){
+        if (categoryId == null){
+            return expenseService.getAllExpenses();
+        }
+        else{
+            return expenseService.getExpensesByCategoryId(categoryId);
+        }
     }
+
     @GetMapping("/{id}")
-    public ResponseEntity<Expense> getExpenseById(@PathVariable Long id){
+    public ResponseEntity<Expense> getExpenseById( @PathVariable Long id){
         return expenseService.findById(id)
                 .map(expense -> ResponseEntity.ok(expense))
                 .orElse(ResponseEntity.notFound().build());
@@ -44,6 +51,11 @@ public class ExpenseController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/summary")
+    public List<CategorySummary> getCategorySummery(){
+        return expenseService.getExpensesByCategory();
     }
 
 }

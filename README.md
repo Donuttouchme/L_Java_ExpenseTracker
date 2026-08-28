@@ -29,7 +29,7 @@ One category has many expenses (one-to-many).
 - [x] **Phase 2** — Repository layer (Spring Data JPA)
 - [x] **Phase 3** — REST Controller with full CRUD endpoints (GET, POST, DELETE)
 - [x] **Phase 4** — Service layer, DTOs, validation, error handling
-- [ ] **Phase 5** — Category–Expense relationship, filtering, summaries
+- [x] **Phase 5** — Category–Expense relationship, filtering, summaries
 - [ ] **Phase 6** — Testing (unit + integration)
 - [ ] **Phase 7** — Migrate to PostgreSQL (Docker)
 - [ ] **Phase 8** *(stretch)* — Authentication, containerization

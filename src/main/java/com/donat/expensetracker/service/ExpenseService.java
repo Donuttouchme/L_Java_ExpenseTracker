@@ -1,5 +1,6 @@
 package com.donat.expensetracker.service;
 
+import com.donat.expensetracker.dto.CategorySummary;
 import com.donat.expensetracker.dto.ExpenseRequest;
 import com.donat.expensetracker.exception.CategoryNotFoundException;
 import com.donat.expensetracker.model.Category;
@@ -43,4 +44,12 @@ public class ExpenseService {
     public void deleteById(Long id) {
         expenseRepository.deleteById(id);
     }
+
+    public List<Expense> getExpensesByCategoryId(Long categoryId){
+        return expenseRepository.findByCategoryId(categoryId);
+    }
+
+   public List<CategorySummary> getExpensesByCategory(){
+        return expenseRepository.getCategorySummaries();
+   }
 }
