@@ -36,4 +36,4 @@ One category has many expenses (one-to-many).
 
 ## Status
 
-🚧 In development — Phase 1.
+🚧 In development — Phase 5.
