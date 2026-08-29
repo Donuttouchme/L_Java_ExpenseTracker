@@ -18,12 +18,8 @@ public class ExpenseRequest {
     @NotNull
     private Long categoryId;
 
-    public ExpenseRequest(BigDecimal _amount, String _description, LocalDate _date, Long _categoryId){
-        amount = _amount;
-        description = _description;
-        date = _date;
-        categoryId = _categoryId;
-    }
+    public ExpenseRequest(){}
+
 
     public BigDecimal getAmount(){
         return amount;

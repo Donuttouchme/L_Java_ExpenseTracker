@@ -30,10 +30,10 @@ One category has many expenses (one-to-many).
 - [x] **Phase 3** — REST Controller with full CRUD endpoints (GET, POST, DELETE)
 - [x] **Phase 4** — Service layer, DTOs, validation, error handling
 - [x] **Phase 5** — Category–Expense relationship, filtering, summaries
-- [ ] **Phase 6** — Testing (unit + integration)
+- [x] **Phase 6** — Testing (unit + integration)
 - [ ] **Phase 7** — Migrate to PostgreSQL (Docker)
 - [ ] **Phase 8** *(stretch)* — Authentication, containerization
 
 ## Status
 
-🚧 In development — Phase 5.
+🚧 In development — Phase 7.
