@@ -25,14 +25,15 @@ public class DataSeeder implements CommandLineRunner {
         // Saving categories
         Category groceries = new Category("Groceries");
         Category subscriptions = new Category("Subscriptions");
-
-        categoryRepository.save(groceries);
-        categoryRepository.save(subscriptions);
-
+        if(categoryRepository.count() == 0) {
+            categoryRepository.save(groceries);
+            categoryRepository.save(subscriptions);
+        }
         // Saving expenses
-        expenseRepository.save(new Expense(new BigDecimal("42.5"), "Migros", LocalDate.now(), groceries));
-        expenseRepository.save(new Expense(new BigDecimal("11.1"), "Coffee", LocalDate.of(2026, 8, 20), subscriptions));
-
+        if (expenseRepository.count() == 0) {
+            expenseRepository.save(new Expense(new BigDecimal("42.5"), "Migros", LocalDate.now(), groceries));
+            expenseRepository.save(new Expense(new BigDecimal("11.1"), "Coffee", LocalDate.of(2026, 8, 20), subscriptions));
+        }
         // Reading back
         System.out.println("=== CATEGORIES ===");
         categoryRepository.findAll().forEach(category -> System.out.println(category.getId() + " " + category.getName()));
