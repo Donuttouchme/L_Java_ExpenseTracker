@@ -30,12 +30,11 @@ public class DataSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) {
         // Saving categories
-        Category groceries = new Category("Groceries");
-        Category subscriptions = new Category("Subscriptions");
-        if(categoryRepository.count() == 0) {
-            categoryRepository.save(groceries);
-            categoryRepository.save(subscriptions);
-        }
+        Category groceries = categoryRepository.findByName("Groceries")
+                .orElseGet(() -> categoryRepository.save(new Category("Groceries")));
+        Category subscriptions = categoryRepository.findByName("Subscriptions")
+                .orElseGet(() -> categoryRepository.save(new Category("Subscriptions")));
+
         // Saving expenses
         if (expenseRepository.count() == 0) {
             expenseRepository.save(new Expense(new BigDecimal("42.5"), "Migros", LocalDate.now(), groceries));
@@ -43,14 +42,8 @@ public class DataSeeder implements CommandLineRunner {
         }
 
         if (userRepository.count() == 0) {
-            userRepository.save(new User("test_user",passwordEncoder.encode("test_password"), "USER"));
+            userRepository.save(new User("test_user", passwordEncoder.encode("test_password"), "USER"));
         }
-        // Reading back
-        System.out.println("=== CATEGORIES ===");
-        categoryRepository.findAll().forEach(category -> System.out.println(category.getId() + " " + category.getName()));
-
-        System.out.println("=== EXPENSES ===");
-        expenseRepository.findAll().forEach(expense -> System.out.println(expense.getAmount() + " " + expense.getDescription() + " " + expense.getDate()));
     }
 
 }

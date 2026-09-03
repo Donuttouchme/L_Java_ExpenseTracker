@@ -1,5 +1,6 @@
 package com.donat.expensetracker;
 
+import com.donat.expensetracker.model.Category;
 import com.donat.expensetracker.repository.CategoryRepository;
 import com.donat.expensetracker.repository.ExpenseRepository;
 import com.donat.expensetracker.repository.UserRepository;
@@ -9,6 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
@@ -32,7 +35,8 @@ public class DataSeederTest {
 
     @Test
     void run_doesNotSeedWhenDataAlreadyExists(){
-        when(categoryRepository.count()).thenReturn(2L);
+        when(categoryRepository.findByName("Groceries")).thenReturn(Optional.of(new Category("Groceries")));
+        when(categoryRepository.findByName("Subscriptions")).thenReturn(Optional.of(new Category("Subscriptions")));
         when(expenseRepository.count()).thenReturn(2L);
         when(userRepository.count()).thenReturn(1L);
 
