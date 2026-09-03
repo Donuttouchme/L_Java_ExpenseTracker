@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.util.List;
 
 @Service
 public class JwtService {
@@ -19,10 +20,10 @@ public class JwtService {
         key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(_key));
     }
 
-    public String generateToken(String username, String role){
+    public String generateToken(String username, List<String> roles){
         return Jwts.builder()
                 .subject(username)
-                .claim("role", role)
+                .claim("roles", roles)
                 .signWith(key)
                 .compact();
     }
@@ -31,10 +32,10 @@ public class JwtService {
         return parseClaims(token)
                 .getSubject();
     }
-
-    public String extractRole(String token){
+    @SuppressWarnings("unchecked")
+    public List<String> extractRoles(String token){
         return parseClaims(token)
-                .get("role", String.class);
+                .get("roles", List.class);
     }
 
     private Claims parseClaims(String token){

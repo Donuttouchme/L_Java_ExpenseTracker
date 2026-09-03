@@ -33,9 +33,9 @@ curl -u test_user:test_password http://localhost:8080/api/expenses
 - **PostgreSQL 16**, run via **Docker Compose**, credentials externalized to `.env`
 - **Hibernate / JPA** (Jakarta Persistence)
 - **Argon2id** password hashing (via **BouncyCastle**)
-- **JWT** (jjwt, HS256) — token service built; login endpoint + filter *in progress*
+- **JWT** (jjwt, HS256) — token service + `POST /auth/login` built; stateless filter *in progress*
 - **Maven**, multi-stage **Dockerfile**
-- **JUnit 5** + **Mockito** — 18 tests across 6 test classes
+- **JUnit 5** + **Mockito** — 20 tests across 7 test classes
 
 ## Architecture
 
@@ -68,7 +68,10 @@ One category has many expenses (one-to-many).
 
 ## API
 
-All paths are under `/api/expenses` and require authentication.
+**Auth:** `POST /auth/login` (public) — returns `{ "token": "..." }` (a signed JWT with the
+user's roles) for valid credentials, `401` otherwise.
+
+All `/api/expenses` paths require authentication.
 
 | Method | Path | Description |
 |---|---|---|
@@ -91,12 +94,13 @@ All paths are under `/api/expenses` and require authentication.
 - [ ] **Phase 8.1+** — Authentication & authorization (Spring Security)
   - [x] HTTP Basic auth (DB-backed users)
   - [x] Password hashing hardened to **Argon2id**
-  - [x] JWT service — signed tokens, role claim, signing key externalized to env
-  - [ ] JWT login endpoint (`POST /auth/login`) + stateless filter — *next*
+  - [x] JWT service — signed tokens, roles claim, signing key externalized to env
+  - [x] JWT login endpoint (`POST /auth/login`) — issues a token, integration-tested
+  - [ ] Stateless JWT filter — consume the token on protected endpoints — *next*
 
 ## Status
 
-🚧 In development — Phase 8: Authentication. HTTP Basic auth works end to end and
-passwords are Argon2id-hashed. The JWT service (signed tokens with a role claim, key
-read from the environment) is built and tested, but not yet wired into the filter
-chain — the login endpoint and JWT filter are next.
+🚧 In development — Phase 8: Authentication. Passwords are Argon2id-hashed, and
+`POST /auth/login` issues a signed JWT (roles claim, key read from the environment),
+integration-tested. The token isn't consumed on protected endpoints yet — the app
+still authenticates with HTTP Basic while the stateless JWT filter is built next.
