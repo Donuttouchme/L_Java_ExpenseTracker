@@ -18,12 +18,18 @@ docker compose up --build
 The API is then on `http://localhost:8080`, PostgreSQL 16 on `5432` with a named
 volume, so data survives a restart.
 
-Every endpoint requires authentication (HTTP Basic). On an empty database the
-seeder creates one user — `test_user` / `test_password` — plus two categories
-and two example expenses:
+Authentication is stateless **JWT**. On an empty database the seeder creates one user
+— `test_user` / `test_password` — plus two categories and two example expenses. Log in
+to get a token, then send it as a Bearer token:
 
 ```bash
-curl -u test_user:test_password http://localhost:8080/api/expenses
+# 1) get a token
+curl -X POST http://localhost:8080/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"test_user","password":"test_password"}'
+
+# 2) call a protected endpoint with it
+curl http://localhost:8080/api/expenses -H "Authorization: Bearer <token>"
 ```
 
 ## Tech stack
@@ -33,9 +39,9 @@ curl -u test_user:test_password http://localhost:8080/api/expenses
 - **PostgreSQL 16**, run via **Docker Compose**, credentials externalized to `.env`
 - **Hibernate / JPA** (Jakarta Persistence)
 - **Argon2id** password hashing (via **BouncyCastle**)
-- **JWT** (jjwt, HS256) — token service + `POST /auth/login` built; stateless filter *in progress*
+- **JWT** (jjwt, HS256) — stateless auth: `POST /auth/login` issues a signed token, a filter validates it per request
 - **Maven**, multi-stage **Dockerfile**
-- **JUnit 5** + **Mockito** — 20 tests across 7 test classes
+- **JUnit 5** + **Mockito** — 22 tests across 8 test classes
 
 ## Architecture
 
@@ -53,8 +59,10 @@ Controller  →  Service  →  Repository  →  PostgreSQL
   service layer
 - **`GlobalExceptionHandler`** turns domain exceptions into HTTP responses in one
   place instead of scattering try/catch through the controller
-- **`SecurityConfig`** — every request authenticated, passwords **Argon2id**-hashed,
+- **`SecurityConfig`** — stateless; every request authenticated, passwords **Argon2id**-hashed,
   users loaded from the database via `CustomUserDetailsService`
+- **`JwtAuthFilter`** — validates the `Bearer` token on each request and populates the
+  security context (no server-side session)
 
 ## Domain
 
@@ -71,7 +79,7 @@ One category has many expenses (one-to-many).
 **Auth:** `POST /auth/login` (public) — returns `{ "token": "..." }` (a signed JWT with the
 user's roles) for valid credentials, `401` otherwise.
 
-All `/api/expenses` paths require authentication.
+All `/api/expenses` paths require a valid token — send `Authorization: Bearer <token>`.
 
 | Method | Path | Description |
 |---|---|---|
@@ -91,16 +99,15 @@ All `/api/expenses` paths require authentication.
 - [x] **Phase 6** — Testing (unit + integration)
 - [x] **Phase 7** — Migrate to PostgreSQL (Docker Compose, externalized secrets)
 - [x] **Phase 8** — Containerization (full stack via Docker Compose)
-- [ ] **Phase 8.1+** — Authentication & authorization (Spring Security)
-  - [x] HTTP Basic auth (DB-backed users)
-  - [x] Password hashing hardened to **Argon2id**
+- [x] **Phase 8.1–8.6** — Authentication & authorization (Spring Security)
+  - [x] DB-backed users, **Argon2id** password hashing
   - [x] JWT service — signed tokens, roles claim, signing key externalized to env
   - [x] JWT login endpoint (`POST /auth/login`) — issues a token, integration-tested
-  - [ ] Stateless JWT filter — consume the token on protected endpoints — *next*
+  - [x] Stateless JWT filter — validates the token on protected endpoints
+- [ ] **Phase 9** — role-based authorization (restrict endpoints by role)
 
 ## Status
 
-🚧 In development — Phase 8: Authentication. Passwords are Argon2id-hashed, and
-`POST /auth/login` issues a signed JWT (roles claim, key read from the environment),
-integration-tested. The token isn't consumed on protected endpoints yet — the app
-still authenticates with HTTP Basic while the stateless JWT filter is built next.
+🚧 In development. **Phase 8 (authentication) complete**: stateless JWT end to end —
+`POST /auth/login` issues a signed token (roles claim, key read from the environment) and a
+filter validates it on every protected request. Passwords are Argon2id-hashed. 22 tests green.
