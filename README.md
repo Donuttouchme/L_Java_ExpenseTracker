@@ -41,7 +41,7 @@ curl http://localhost:8080/api/expenses -H "Authorization: Bearer <token>"
 - **Argon2id** password hashing (via **BouncyCastle**)
 - **JWT** (jjwt, HS256) — stateless auth: `POST /auth/login` issues a signed token, a filter validates it per request
 - **Maven**, multi-stage **Dockerfile**
-- **JUnit 5** + **Mockito** — 22 tests across 8 test classes
+- **JUnit 5** + **Mockito** — 28 tests across 8 test classes
 
 ## Architecture
 
@@ -99,15 +99,27 @@ All `/api/expenses` paths require a valid token — send `Authorization: Bearer 
 - [x] **Phase 6** — Testing (unit + integration)
 - [x] **Phase 7** — Migrate to PostgreSQL (Docker Compose, externalized secrets)
 - [x] **Phase 8** — Containerization (full stack via Docker Compose)
-- [x] **Phase 8.1–8.6** — Authentication & authorization (Spring Security)
+- [x] **Phase 8.1–8.7** — Authentication & authorization (Spring Security)
   - [x] DB-backed users, **Argon2id** password hashing
   - [x] JWT service — signed tokens, roles claim, signing key externalized to env
   - [x] JWT login endpoint (`POST /auth/login`) — issues a token, integration-tested
   - [x] Stateless JWT filter — validates the token on protected endpoints
+  - [x] Token expiry (`iat` / `exp`) with a configurable lifetime and an injected `Clock`,
+        so expiry is tested in milliseconds instead of by waiting
 - [ ] **Phase 9** — role-based authorization (restrict endpoints by role)
 
 ## Status
 
-🚧 In development. **Phase 8 (authentication) complete**: stateless JWT end to end —
-`POST /auth/login` issues a signed token (roles claim, key read from the environment) and a
-filter validates it on every protected request. Passwords are Argon2id-hashed. 22 tests green.
+✅ **Phase 8 complete — authentication works end to end.** `POST /auth/login` issues a signed JWT
+(subject, roles claim, `iat` / `exp`), and a stateless filter validates it on every protected request.
+Passwords are Argon2id-hashed, the signing key is read from the environment, and tokens expire after a
+configurable lifetime. **28 tests green** across 8 test classes.
+
+**Milestone — pausing feature work here.** This project has done its job as a first Java/Spring build:
+it covers the layered architecture, Spring Data JPA, DTOs and validation, PostgreSQL in Docker, a full
+authentication story, and unit plus integration testing. Rather than keep piling features onto one
+codebase, the next stretch of learning moves to fresh projects, so the same fundamentals get built
+again from scratch in different shapes.
+
+Phase 9 (role-based authorization) is planned but not built. The roles already travel inside the
+token, so it remains a short pick-up if this project is revisited.

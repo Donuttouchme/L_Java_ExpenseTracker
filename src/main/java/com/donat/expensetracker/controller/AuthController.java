@@ -37,6 +37,7 @@ public class AuthController {
         } catch (AuthenticationException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid login credentials!");
         }
+        
     }
 
 }

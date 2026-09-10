@@ -93,13 +93,14 @@ class ExpenseServiceTest {
         assertEquals("Food", saved.getCategory().getName());
     }
 
-    // Delegation check
+    @Test
     void deleteById_checkingDelegation(){
         expenseService.deleteById(1L);
 
         verify(expenseRepository).deleteById(1L);
     }
 
+    @Test
     void findById_checkingDelegation(){
         Expense expense = new Expense();
         when(expenseRepository.findById(1L)).thenReturn(Optional.of(expense));
